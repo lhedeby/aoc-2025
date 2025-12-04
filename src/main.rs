@@ -14,7 +14,7 @@ fn main() {
     } else {
         println!("Running all...");
         for day in DAYS {
-            println!("running day {day}");
+            print!("Day {day}: ");
             let curr = Instant::now();
             run(day);
             println!(" (time: {:.3?})", curr.elapsed())
