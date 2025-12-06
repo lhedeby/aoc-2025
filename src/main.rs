@@ -2,7 +2,7 @@ mod days;
 
 use std::{env, time::Instant};
 
-const DAYS: [&str; 5] = ["1", "2", "3", "4", "5"];
+const DAYS: [&str; 6] = ["1", "2", "3", "4", "5", "6"];
 
 fn main() {
     let start = Instant::now();
@@ -31,6 +31,7 @@ fn run(day: &str) {
         "3" => days::day03::solve().unwrap(),
         "4" => days::day04::solve().unwrap(),
         "5" => days::day05::solve().unwrap(),
+        "6" => days::day06::solve().unwrap(),
         _ => panic!("unexpected arg"),
     }
 }
