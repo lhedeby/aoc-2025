@@ -4,8 +4,8 @@ use std::{
     io::{BufRead, BufReader},
 };
 
-pub fn solve() -> Result<(), Box<dyn Error>> {
-    let f = File::open("./input/day04")?;
+pub fn solve(path: &str) -> Result<(usize, usize), Box<dyn Error>> {
+    let f = File::open(path)?;
     let reader = BufReader::new(f);
 
     let mut p1 = 0;
@@ -44,7 +44,7 @@ pub fn solve() -> Result<(), Box<dyn Error>> {
 
     print!("p1: {}, p2: {} ", p1, p2);
 
-    Ok(())
+    Ok((p1, p2))
 }
 
 fn remove(map: &mut Vec<u8>, width: usize, height: usize) {

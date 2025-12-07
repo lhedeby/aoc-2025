@@ -2,21 +2,27 @@ mod days;
 
 use std::{env, time::Instant};
 
-const DAYS: [&str; 6] = ["1", "2", "3", "4", "5", "6"];
+const DAYS: [&str; 7] = ["1", "2", "3", "4", "5", "6", "7"];
 
 fn main() {
     let start = Instant::now();
 
     let args: Vec<String> = env::args().collect();
 
+    let folder = if args.iter().any(|a| a == "ex") {
+        "examples"
+    } else {
+        "input"
+    };
+
     if let Some(day) = args.get(1) {
-        run(day)
+        run(folder, day)
     } else {
         println!("Running all...");
         for day in DAYS {
             print!("Day {day}: ");
             let curr = Instant::now();
-            run(day);
+            run(folder, day);
             println!(" (time: {:.3?})", curr.elapsed())
         }
     }
@@ -24,14 +30,17 @@ fn main() {
     println!("Total time: {:.3?}", start.elapsed())
 }
 
-fn run(day: &str) {
+fn run(folder: &str, day: &str) {
+    let path = format!("./{}/day{:0>2}", folder, day);
+    let path = path.as_str();
     match day {
-        "1" => days::day01::solve().unwrap(),
-        "2" => days::day02::solve().unwrap(),
-        "3" => days::day03::solve().unwrap(),
-        "4" => days::day04::solve().unwrap(),
-        "5" => days::day05::solve().unwrap(),
-        "6" => days::day06::solve().unwrap(),
+        "1" => assert_eq!(days::day01::solve(path).unwrap(), (1055, 6386)),
+        "2" => assert_eq!(days::day02::solve(path).unwrap(), (32976912643, 54446379122)),
+        "3" => assert_eq!(days::day03::solve(path).unwrap(), (17430, 171975854269367)),
+        "4" => assert_eq!(days::day04::solve(path).unwrap(), (1393, 8643)),
+        "5" => assert_eq!(days::day05::solve(path).unwrap(), (726, 354226555270043)),
+        "6" => assert_eq!(days::day06::solve(path).unwrap(), (6371789547734, 11419862653216)),
+        "7" => assert_eq!(days::day07::solve(path).unwrap(), (1504, 5137133207830)),
         _ => panic!("unexpected arg"),
     }
 }

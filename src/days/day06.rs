@@ -4,8 +4,8 @@ use std::{
     io::{BufRead, BufReader},
 };
 
-pub fn solve() -> Result<(), Box<dyn Error>> {
-    let f = File::open("./input/day06")?;
+pub fn solve(path: &str) -> Result<(usize, usize), Box<dyn Error>> {
+    let f = File::open(path)?;
     let reader = BufReader::new(f);
     let lines = reader.lines();
 
@@ -89,5 +89,5 @@ pub fn solve() -> Result<(), Box<dyn Error>> {
 
     print!("p1: {}, p2: {} ", p1, p2);
 
-    Ok(())
+    Ok((p1, p2))
 }

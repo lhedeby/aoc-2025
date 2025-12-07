@@ -4,8 +4,9 @@ use std::{
     io::{BufRead, BufReader},
 };
 
-pub fn solve() -> Result<(), Box<dyn Error>> {
-    let f = File::open("./input/day02")?;
+
+pub fn solve(path: &str) -> Result<(usize, usize), Box<dyn Error>> {
+    let f = File::open(path)?;
     let reader = BufReader::new(f);
 
     let line = reader.lines().next().unwrap()?;
@@ -39,7 +40,7 @@ pub fn solve() -> Result<(), Box<dyn Error>> {
 
     print!("p1: {}, p2: {} ", p1, p2);
 
-    Ok(())
+    Ok((p1, p2))
 }
 
 fn dec_vec(v: &mut Vec<u8>, n: usize) {
@@ -89,3 +90,4 @@ fn find_repeats(v: &Vec<u8>, is_p1: bool) -> Option<usize> {
     }
     None
 }
+
