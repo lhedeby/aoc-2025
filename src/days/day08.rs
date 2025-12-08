@@ -11,6 +11,8 @@ pub fn solve(path: &str) -> Result<(usize, usize), Box<dyn Error>> {
     let reader = BufReader::new(f);
     let lines = reader.lines();
 
+    let start = std::time::Instant::now();
+
     let jboxes: Vec<(i64, i64, i64)> = lines
         .map(|line| {
             let line = line.unwrap();
@@ -23,25 +25,25 @@ pub fn solve(path: &str) -> Result<(usize, usize), Box<dyn Error>> {
         })
         .collect();
 
-    let mut len_heap = BinaryHeap::new();
+    let mut len_heap = BinaryHeap::with_capacity(jboxes.len() * (jboxes.len() - 1) / 2);
 
     for i in 0..jboxes.len() - 1 {
+        let (x1, y1, z1) = unsafe { jboxes.get_unchecked(i) };
         for j in i + 1..jboxes.len() {
-            let dist = (jboxes[i].0 - jboxes[j].0) * (jboxes[i].0 - jboxes[j].0)
-                + (jboxes[i].1 - jboxes[j].1) * (jboxes[i].1 - jboxes[j].1)
-                + (jboxes[i].2 - jboxes[j].2) * (jboxes[i].2 - jboxes[j].2);
-            len_heap.push(Reverse((dist, i, j)))
+            let (x2, y2, z2) = unsafe { jboxes.get_unchecked(j) };
+            let dx = x1 - x2;
+            let dy = y1 - y2;
+            let dz = z1 - z2;
+            let dist = dx * dx + dy * dy + dz * dz;
+            len_heap.push(Reverse((dist, i, j)));
         }
     }
 
-    let mut circuits: Vec<HashSet<usize>> = Vec::new();
-
+    let mut circuits: Vec<HashSet<usize>> = Vec::with_capacity(128);
     let mut p1 = 0;
-
     let mut i = 0;
-    let mut connection_out = None;
-    // break out
-    while !circuits.get(0).is_some_and(|x| x.len() == jboxes.len()) {
+
+    let p2_connection = loop {
         if i == 1000 {
             circuits.sort_by_key(|a| a.len());
             circuits.reverse();
@@ -51,32 +53,30 @@ pub fn solve(path: &str) -> Result<(usize, usize), Box<dyn Error>> {
             }
         }
 
-        let temp = len_heap.pop().unwrap().0;
-        let connection = (temp.1, temp.2, temp.0);
-        connection_out = Some(connection);
+        let connection = len_heap.pop().unwrap().0;
 
         let mut aa = None;
         let mut bb = None;
         for circuit in circuits.iter().enumerate() {
-            if circuit.1.contains(&connection.0) {
+            if circuit.1.contains(&connection.1) {
                 aa = Some(circuit.0)
             }
-            if circuit.1.contains(&connection.1) {
+            if circuit.1.contains(&connection.2) {
                 bb = Some(circuit.0)
             }
         }
         match (aa, bb) {
             (None, None) => {
                 let mut new = HashSet::new();
-                new.insert(connection.0);
                 new.insert(connection.1);
+                new.insert(connection.2);
                 circuits.push(new)
             }
             (None, Some(b)) => {
-                circuits[b].insert(connection.0);
+                circuits[b].insert(connection.1);
             }
             (Some(a), None) => {
-                circuits[a].insert(connection.1);
+                circuits[a].insert(connection.2);
             }
             (Some(mut a), Some(b)) => {
                 if a != b {
@@ -88,9 +88,14 @@ pub fn solve(path: &str) -> Result<(usize, usize), Box<dyn Error>> {
                 }
             }
         }
+        if circuits.get(0).is_some_and(|x| x.len() == jboxes.len()) {
+            break connection;
+        }
+
         i += 1;
-    }
-    let p2 = jboxes[connection_out.unwrap().0].0 * jboxes[connection_out.unwrap().1].0;
+    };
+
+    let p2 = jboxes[p2_connection.1].0 * jboxes[p2_connection.2].0;
 
     print!("p1: {}, p2: {} ", p1, p2);
 
