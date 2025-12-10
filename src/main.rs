@@ -2,7 +2,7 @@ mod days;
 
 use std::{env, time::Instant};
 
-const DAYS: [&str; 8] = ["1", "2", "3", "4", "5", "6", "7", "8"];
+const DAYS: [&str; 9] = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 fn main() {
     let start = Instant::now();
@@ -42,6 +42,7 @@ fn run(folder: &str, day: &str) {
         "6" => assert_eq!(days::day06::solve(path).unwrap(), (6371789547734, 11419862653216)),
         "7" => assert_eq!(days::day07::solve(path).unwrap(), (1504, 5137133207830)),
         "8" => assert_eq!(days::day08::solve(path).unwrap(), (131580, 6844224)),
+        "9" => assert_eq!(days::day09::solve(path).unwrap(), (4763932976, 1501292304)),
         _ => panic!("unexpected arg"),
     }
 }

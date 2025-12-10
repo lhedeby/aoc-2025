@@ -11,8 +11,6 @@ pub fn solve(path: &str) -> Result<(usize, usize), Box<dyn Error>> {
     let reader = BufReader::new(f);
     let lines = reader.lines();
 
-    let start = std::time::Instant::now();
-
     let jboxes: Vec<(i64, i64, i64)> = lines
         .map(|line| {
             let line = line.unwrap();

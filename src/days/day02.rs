@@ -44,11 +44,12 @@ pub fn solve(path: &str) -> Result<(usize, usize), Box<dyn Error>> {
 
 fn dec_vec(v: &mut Vec<u8>, n: usize) {
     let p = v.len() - 1 - n;
-    if v[p] == 0 {
-        v[p] = 9;
+    let number = unsafe { v.get_unchecked_mut(p) };
+    if *number == 0 {
+        *number = 9;
         dec_vec(v, n + 1)
     } else {
-        v[p] -= 1;
+        *number -= 1;
     }
 }
 
@@ -56,7 +57,7 @@ fn find_repeats(v: &Vec<u8>) -> Option<(usize, bool)> {
     let mut start = 0;
     let mut len = v.len();
 
-    while v[start] == 0 {
+    while unsafe { *v.get_unchecked(start) } == 0 {
         start += 1;
         len -= 1;
     }
@@ -68,10 +69,10 @@ fn find_repeats(v: &Vec<u8>) -> Option<(usize, bool)> {
         let mut has_repeat = true;
 
         'outer: for i in 0..l {
-            let expected = v[start + i];
+            let expected = unsafe { v.get_unchecked(start + i) };
             let groups = len / l;
             for j in 1..groups {
-                if v[start + i + j * l] != expected {
+                if unsafe { v.get_unchecked(start + i + j * l) } != expected {
                     has_repeat = false;
                     break 'outer;
                 }
@@ -82,7 +83,7 @@ fn find_repeats(v: &Vec<u8>) -> Option<(usize, bool)> {
             let mut res: usize = 0;
             for r in start..(len + start) {
                 res *= 10;
-                res += v[r] as usize;
+                res += unsafe { *v.get_unchecked(r) } as usize;
             }
             let is_p1 = if len % 2 == 0 && l == len / 2 {
                 true
